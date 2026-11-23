@@ -102,7 +102,7 @@ npm run deploy       # wrangler deploy
 npm run cf:dev       # 本地起 Workers 运行时（workerd）预览，默认 8787
 ```
 
-SPA 深路径在任何路由上都返回 `dist/index.html`（200），未知 `/api/*` 返回 404 JSON，与 Node 端行为一致。
+SPA 回退只对**文档请求**生效（`GET` + `Accept` 含 `text/html` + 路径无文件扩展名），其余一行 404 纯文本；未知 `/api/*` 返回 404 JSON。因此缺失的 `/images/hero-bg.jpg`、`/favicon.ico` 在 Node 端与 Workers 端都是 404，不会返回一份 HTML —— 与原始成品包行为一致。
 
 ## 复刻一致性说明
 
