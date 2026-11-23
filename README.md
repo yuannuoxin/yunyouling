@@ -85,6 +85,25 @@ yunyouling/
 
 接口与前端共用 `src/data`（同一份数据源），因此 SSR 之外无需二次请求，首屏即为最终形态。
 
+## 部署（Cloudflare Workers）
+
+线上跑的是 Workers 版本，Node 版本仅用于本地/自建服务器：
+
+| 文件 | 作用 |
+| --- | --- |
+| `worker/index.ts` | Workers 入口：`/api/*` 交给 `server/api.ts`，其余透传给 `env.ASSETS` |
+| `server/api.ts` | 纯 JSON API 实例，Node 与 Workers 共用同一份 |
+| `wrangler.jsonc` | `main: worker/index.ts`、`assets.directory: ./dist`、`not_found_handling: single-page-application` |
+| `server/index.ts` | Node 入口：API + `serveStatic` + SPA 回退（`npm start`） |
+
+```bash
+npm run build        # 生成 dist
+npm run deploy       # wrangler deploy
+npm run cf:dev       # 本地起 Workers 运行时（workerd）预览，默认 8787
+```
+
+SPA 深路径在任何路由上都返回 `dist/index.html`（200），未知 `/api/*` 返回 404 JSON，与 Node 端行为一致。
+
 ## 复刻一致性说明
 
 - 设计令牌与原站一致：`brand-red #e11d2e`、`brand-crimson #b8141f`、`brand-gold #f5c542`、`ink #07080d / ink-2 #0d0f17 / ink-3 #141726`，字体栈 `PingFang SC → Microsoft YaHei → Noto Sans SC`。
