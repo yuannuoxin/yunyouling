@@ -102,10 +102,23 @@ npm run deploy       # wrangler deploy
 npm run cf:dev       # 本地起 Workers 运行时（workerd）预览，默认 8787
 ```
 
-SPA 回退只对**文档请求**生效（`GET` + `Accept` 含 `text/html` + 路径无文件扩展名），其余一行 404 纯文本；未知 `/api/*` 返回 404 JSON。因此缺失的 `/images/hero-bg.jpg`、`/favicon.ico` 在 Node 端与 Workers 端都是 404，不会返回一份 HTML —— 与原始成品包行为一致。
+SPA 回退只对**文档请求**生效（`GET` + `Accept` 含 `text/html` + 路径无文件扩展名），其余一行 404 纯文本；未知 `/api/*` 返回 404 JSON。因此不存在的静态资源（图片、图标、字体）在 Node 端与 Workers 端都返回 404，不会返回一份 HTML。
+
+## 品牌素材（`public/`）
+
+原成品包里 `images/hero-bg.jpg` 与 favicon 都是缺失的（前者靠 `onError` 隐藏，后者 404），本项目补齐：
+
+| 文件 | 说明 |
+| --- | --- |
+| `public/images/hero-bg.jpg` | 1920×1080 仙山云海（近黑基调 + 朱红金宫阙微光），Hero 内 `opacity-55` + 两层 ink 渐变 + 弱化网格叠加 |
+| `public/favicon.svg` | 红金渐变圆角方块 + 金冠 + 右上金点，与站内 logo 同构 |
+| `public/favicon.ico` | 由同一 SVG 渲染，内含 16/32/48/256 四档 PNG 子图 |
+| `index.html` | 补 `<link rel="icon">`（ico + svg）、`theme-color`、`og:*` |
+
+Hero 的背景容器加了 `isolate`（创建层叠上下文），否则 `-z-10` 的主视觉会被 `body` 背景色整块盖住——原包图缺失时看不出来，补图后必须修这一处。
 
 ## 复刻一致性说明
 
 - 设计令牌与原站一致：`brand-red #e11d2e`、`brand-crimson #b8141f`、`brand-gold #f5c542`、`ink #07080d / ink-2 #0d0f17 / ink-3 #141726`，字体栈 `PingFang SC → Microsoft YaHei → Noto Sans SC`。
 - 1440×1100 视口下整页高度 9770px，与原站完全一致；逐屏像素比对除动画相位（浮动光斑、跑马灯、在线人数、实时速率）外无差异。
-- 原包中 `images/hero-bg.jpg` 本身缺失（`onError` 隐藏），此处保留同一行为，视觉上的主视觉由渐变 + 网格 + 光斑构成。
+- 与原站的有意差异：首屏主视觉图与 favicon 已补齐（原站缺失），其余文案、结构、交互、配色保持 1:1。

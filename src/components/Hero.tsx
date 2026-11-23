@@ -19,18 +19,19 @@ export function Hero({ onRegister }: HeroProps) {
   const liveCount = useLiveUserCount();
 
   return (
-    <section id="top" className="relative overflow-hidden pt-28 pb-16 sm:pt-36 lg:pb-24">
+    <section id="top" className="relative isolate overflow-hidden pt-28 pb-16 sm:pt-36 lg:pb-24">
       <div className="absolute inset-0 -z-10">
         <img
           src="/images/hero-bg.jpg"
           alt=""
-          className="h-full w-full object-cover opacity-40"
+          className="h-full w-full object-cover opacity-55"
           onError={(event) => {
             event.currentTarget.style.display = 'none';
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/70 to-ink" />
-        <div className="grid-bg absolute inset-0" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/45 via-ink/72 to-ink" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/45 to-transparent" />
+        <div className="grid-bg absolute inset-0 opacity-40" />
         <div className="animate-float absolute top-20 -left-20 h-72 w-72 rounded-full bg-brand-red/30 blur-3xl" />
         <div className="animate-float-slow absolute top-40 right-0 h-96 w-96 rounded-full bg-brand-gold/15 blur-3xl" />
       </div>
